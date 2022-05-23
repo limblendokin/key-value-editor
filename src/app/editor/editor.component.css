@@ -1,0 +1,61 @@
+thead,
+table,
+td,
+th {
+  position: relative;
+}
+.table > :not(:first-child):not(.plus) {
+  border-top: 0;
+}
+.plus {
+  position: absolute;
+  padding: 0;
+  color: rgba(0, 0, 0, 0.45);
+  text-align: center;
+  line-height: 16px;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.45);
+  background-color: white;
+  cursor: pointer;
+  transition: border 0.2s, color 0.2s;
+}
+.plus:hover {
+  border: 2px solid rgba(0, 0, 0, 1);
+  color: rgba(0, 0, 0, 1);
+  transition: border 0.2s, color 0.2s;
+}
+.plus-right {
+  margin-top: -10px;
+  margin-right: -10px;
+  right: 0;
+  top: 50%;
+}
+.plus-bottom {
+  margin-bottom: -10px;
+  margin-left: -10px;
+  left: 50%;
+  bottom: 0;
+}
+.trash {
+  position: absolute;
+  line-height: 20px;
+  right: 0;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  margin-top: -10px;
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+tr:hover > td .trash {
+  opacity: 1;
+  transition: opacity 0.5s;
+}
+th:hover .trash {
+  opacity: 1;
+  transition: opacity 0.5s;
+}

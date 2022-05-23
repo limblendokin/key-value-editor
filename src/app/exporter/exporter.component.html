@@ -1,0 +1,35 @@
+<div *ngIf="visible">
+  <div class="form-check">
+    <input
+      class="form-check-input"
+      type="radio"
+      name="jsonRadio"
+      id="jsonRadio"
+      [checked]="exportType === 'json'"
+      value="json"
+      (change)="onExportTypeChange('json')"
+    />
+    <label class="form-check-label" for="jsonRadio"> JSON </label>
+  </div>
+  <div class="form-check">
+    <input
+      class="form-check-input"
+      type="radio"
+      name="csvRadio"
+      id="csvRadio"
+      [checked]="exportType === 'csv'"
+      value="csv"
+      (change)="onExportTypeChange('csv')"
+    />
+    <label class="form-check-label" for="csvRadio"> CSV </label>
+  </div>
+  <textarea
+    type="text"
+    name="textarea"
+    class="form-control"
+    placeholder="Import or edit data to export"
+    id="floatingTextarea"
+    style="height: 100px"
+    [(ngModel)]="textarea"
+  ></textarea>
+</div>
