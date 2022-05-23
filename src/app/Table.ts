@@ -1,7 +1,7 @@
 export class Table {
   headers: string[];
   rows: string[][];
-  constructor(headers: string[], rows: string[][]) {
+  constructor(headers?: string[], rows?: string[][]) {
     this.headers = headers || [''];
     this.rows = rows || [['']];
   }
@@ -10,16 +10,11 @@ export class Table {
   }
   modifyHeader(index: number, newName: string) {
     this.headers[index] = newName;
-    console.log('modifying ' + index + ' ' + newName);
-    console.log(this.headers);
   }
   clone(): Table {
-    console.log('cloning');
-    console.log(this);
     const headers = [...this.headers];
     const rows = this.rows.map((row) => [...row]);
     const newTable = new Table(headers, rows);
-    console.log(newTable);
     return newTable;
   }
   addRow() {
@@ -32,7 +27,6 @@ export class Table {
   addColumn() {
     this.headers.push('');
     this.rows.map((row) => row.push(''));
-    console.log('adding column ' + this.headers.length);
   }
   deleteRow(index: number) {
     this.rows.splice(index, 1);

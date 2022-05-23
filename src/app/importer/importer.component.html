@@ -6,7 +6,7 @@
   <div class="mb-3">
     <textarea
       name="textarea"
-      class="form-control"
+      [className]="valid ? 'form-control' : 'is-invalid form-control'"
       placeholder="CSV or JSON data to edit"
       style="height: 70vh"
       [(ngModel)]="textarea"

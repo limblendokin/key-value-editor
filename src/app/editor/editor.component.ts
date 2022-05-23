@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TrackByFunction } from '@angular/core';
 import { Table } from '../Table';
 import { TableService } from '../services/table.service';
 import { UiService } from '../services/ui.service';
@@ -35,5 +35,8 @@ export class EditorComponent implements OnInit {
   }
   deleteColumn(index: number) {
     this.tableService.deleteColumn(index);
+  }
+  trackByIndex(index: number): TrackByFunction<number> {
+    return () => index;
   }
 }

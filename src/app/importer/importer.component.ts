@@ -11,6 +11,7 @@ export class ImporterComponent implements OnInit {
   textarea: string = '';
   visible: boolean = false;
   subscription: Subscription;
+  valid: boolean = true;
   constructor(
     private converterService: ConverterService,
     private uiService: UiService
@@ -22,7 +23,10 @@ export class ImporterComponent implements OnInit {
 
   ngOnInit(): void {}
   openEditor(): void {
-    this.converterService.setTableViaText(this.textarea);
-    this.uiService.setSelected('editor');
+    const success = this.converterService.setTableViaText(this.textarea);
+    this.valid = success;
+    if (success) {
+      this.uiService.setSelected('editor');
+    }
   }
 }

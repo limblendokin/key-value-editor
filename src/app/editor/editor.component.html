@@ -2,12 +2,18 @@
   <table class="table table-bordered border-info">
     <thead class="table-info border-info">
       <tr>
-        <th *ngFor="let header of table.headers; index as HeaderIndex">
+        <th
+          *ngFor="
+            let header of table.headers;
+            index as headerIndex;
+            trackBy: trackByIndex
+          "
+        >
           <app-table-header
-            index="{{ HeaderIndex }}"
+            index="{{ headerIndex }}"
             content="{{ header }}"
           ></app-table-header>
-          <div class="trash" (click)="deleteColumn(HeaderIndex)">
+          <div class="trash" (click)="deleteColumn(headerIndex)">
             <i class="bi bi-trash text-danger"></i>
           </div>
         </th>

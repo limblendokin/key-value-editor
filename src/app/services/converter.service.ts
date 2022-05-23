@@ -33,18 +33,28 @@ export class ConverterService {
     const concatedTable = [table.headers, ...table.rows];
     return concatedTable.map((row) => row.join(',')).join('\n');
   }
+
   setTableViaText(text: string) {
     let table: Table;
+    let tryCsv = false;
     try {
       table = this.tableFromJson(text);
     } catch (e) {
+      tryCsv = true;
+    }
+    try {
       table = this.tableFromCsv(text);
+    } catch (e) {
+      return false;
     }
     this.tableService.setTable(table);
+    return true;
   }
   tableFromJson(json: string): Table {
     const jsonData = JSON.parse(json);
-
+    if (!jsonData || jsonData.length == 0) {
+      return new Table();
+    }
     const headers: string[] = Object.keys(jsonData[0]);
     const rows: string[][] = jsonData.map((rowObj: any) =>
       headers.map((key: string) => rowObj[key])
@@ -52,7 +62,10 @@ export class ConverterService {
     return new Table(headers, rows);
   }
   tableFromCsv(csv: string): Table {
-    const [headers, ...rows] = csv.split('\n').map((arr) => arr.split(','));
+    const [headers, ...rows] = csv
+      .split('\n')
+      .filter((str) => str) // filter empty strings
+      .map((arr) => arr.split(','));
     return new Table(headers, rows);
   }
 }

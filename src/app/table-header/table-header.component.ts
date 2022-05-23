@@ -12,12 +12,9 @@ export class TableHeaderComponent implements OnInit {
 
   constructor(private tableService: TableService) {}
 
-  ngOnInit(): void {
-    console.log('init ' + this.index + this.content);
-  }
+  ngOnInit(): void {}
   onBlur(e: any): void {
     this.content = e.target.innerText;
-    console.log('blur ' + this.index);
     this.tableService.modifyHeader(+this.index, this.content);
   }
 }
