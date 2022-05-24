@@ -34,8 +34,25 @@ export class ConverterService {
     return JSON.stringify(json);
   }
   csvFromTable(table: Table): string {
-    const concatedTable = [table.headers, ...table.rows];
-    return concatedTable.map((row) => row.join(',')).join('\n');
+    const concatinatedTable = [table.headers, ...table.rows];
+    const maxLength = concatinatedTable.reduce(
+      (acc, cv) => (acc = Math.max(acc, cv.length)),
+      0
+    );
+    return concatinatedTable
+      .map((row) => {
+        return row
+          .map((str) =>
+            // if string has qoutation marks, commas, trailing or ending spaces,
+            // surround it with qoutation marks and double quotation marks within origin string
+            /[",]/.test(str) || str[0] == ' ' || str[str.length - 1] == ' '
+              ? '"' + str.replace(/"/g, '""') + '"'
+              : str
+          )
+          .concat(([] as string[]).fill('', 0, maxLength - row.length))
+          .join(',');
+      })
+      .join('\n');
   }
 
   setTableViaText(text: string) {

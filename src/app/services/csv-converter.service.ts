@@ -28,6 +28,12 @@ class Context {
     this.state.readNext(str[this.i]);
     const parsed = this.parsed;
     this.parsed = [];
+    for (let i = 1, prevLength = parsed[0].length; i < parsed.length; i++) {
+      if (parsed[i].length !== prevLength) {
+        throw SyntaxError('csv contains syntax errors');
+      }
+    }
+
     return parsed;
   }
 }
