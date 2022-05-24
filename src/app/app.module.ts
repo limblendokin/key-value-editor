@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { TableHeaderComponent } from './table-header/table-header.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { ExporterComponent } from './exporter/exporter.component';
+import { CsvConverterService } from './services/csv-converter.service';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,7 @@ import { ExporterComponent } from './exporter/exporter.component';
     ExporterComponent,
   ],
   imports: [BrowserModule, FormsModule],
-  providers: [],
+  providers: [CsvConverterService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

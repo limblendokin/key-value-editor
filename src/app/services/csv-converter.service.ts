@@ -1,153 +1,138 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-/**
- * The Context defines the interface of interest to clients. It also maintains a
- * reference to an instance of a State subclass, which represents the current
- * state of the Context.
- */
- class Context {
-  /**
-   * @type {State} A reference to the current state of the Context.
-   */
+// https://www.codeproject.com/Articles/1175263/Why-to-Build-Your-Own-CSV-Parser-or-Maybe-Not
+class Context {
   private state: State;
-  public str:string
-  public i:number;
-  public parsed: string[][];
-  constructor(str:string) {
-      this.str = str;
+  public parsed: string[][] = [];
+  public line: string[] = [];
+  public field: string = '';
+  public quotedField: string = '';
+  public i: number = 0;
+  constructor() {
+    this.state = new StartLine();
+    this.state.setContext(this);
   }
-
-  /**
-   * The Context allows changing the State object at runtime.
-   */
   public transitionTo(state: State): void {
-      console.log(`Context: Transition to ${(<any>state).constructor.name}.`);
-      this.state = state;
-      this.state.setContext(this);
+    this.state = state;
+    this.state.setContext(this);
   }
 
-  /**
-   * The Context delegates part of its behavior to the current State object.
-   */
-  public parse(): void {
-    while(this.i < this.str.length){
-      this.state.readNext();
+  public parse(str: string): string[][] {
+    while (this.i < str.length) {
+      this.state.readNext(str[this.i++]);
     }
+    this.transitionTo(new EndLine());
+    this.state.readNext(str[this.i]);
+    const parsed = this.parsed;
+    this.parsed = [];
+    return parsed;
   }
 }
 
-/**
-* The base State class declares methods that all Concrete State should
-* implement and also provides a backreference to the Context object, associated
-* with the State. This backreference can be used by States to transition the
-* Context to another State.
-*/
 abstract class State {
-  protected context: Context;
+  protected ctx!: Context;
 
-  public setContext(context: Context) {
-      this.context = context;
+  public abstract readNext(str: string): void;
+
+  public setContext(ctx: Context): void {
+    this.ctx = ctx;
   }
-
-  public abstract readNext(str:string): void;
-
 }
 
-/**
-* Concrete States implement various behaviors, associated with a state of the
-* Context.
-*/
 class StartLine extends State {
-  public readNext(): void {
-    const c = this.context.str[this.context.i];
-    if(c == '\n'){
-      this.context.i++;
-      this.context.transitionTo(new EndLine());
+  public readNext(c: string): void {
+    if (c == '\n') {
+      this.ctx.transitionTo(new EndLine());
       return;
     }
-    this.context.transitionTo(new StartField());
-    
+    this.ctx.i--;
+    this.ctx.transitionTo(new StartField());
   }
 }
 
 class StartField extends State {
-  public readNext(): void {
-    const c = this.context.str[this.context.i];
-    if(c == '"'){
-      this.context.transitionTo(new QuotedField());
+  public readNext(c: string): void {
+    if (c == '"') {
+      this.ctx.transitionTo(new QuotedField());
       return;
     }
-    if(c == '\n'){
-      this.context.transitionTo(new EndLine());
+    if (c == '\n') {
+      this.ctx.transitionTo(new EndLine());
       return;
     }
-    this.context.transitionTo(new RegularField());
+    if (c == ' ') {
+      return;
+    }
+    this.ctx.i--;
+    this.ctx.transitionTo(new RegularField());
   }
 }
-class RegularField extends State{
-  public readNext(): void {
-    const c = this.context.str[this.context.i];
-    if(c=='\n'){
-      this.context.transitionTo(new EndLine());
+class RegularField extends State {
+  public readNext(c: string): void {
+    if (c == '\n') {
+      this.ctx.transitionTo(new EndLine());
+      return;
+    }
+    if (c == ',') {
+      this.ctx.line.push(this.ctx.field.trim());
+      this.ctx.field = '';
+      this.ctx.transitionTo(new StartField());
+      return;
+    }
+    this.ctx.field += c;
+  }
+}
+class QuotedField extends State {
+  public readNext(c: string): void {
+    if (c == '"') {
+      this.ctx.transitionTo(new DoubleQuote());
+      return;
+    }
+    this.ctx.quotedField += c;
+  }
+}
+class DoubleQuote extends State {
+  public readNext(c: string): void {
+    if (c == '"') {
+      this.ctx.quotedField += c;
+      this.ctx.transitionTo(new QuotedField());
+      return;
+    }
+    if (c == ',') {
+      this.ctx.line.push(this.ctx.quotedField);
+      this.ctx.quotedField = '';
+      this.ctx.transitionTo(new StartField());
+      return;
+    }
+    if (c == '\n') {
+      this.ctx.transitionTo(new EndLine());
+      return;
     }
   }
-  
 }
-class QuotedField extends State{
-  public readNext(): void {
-      this.context.transitionTo(new ConcreteStateB());
+class EndLine extends State {
+  public readNext(c: string): void {
+    if (this.ctx.quotedField) {
+      this.ctx.line.push(this.ctx.quotedField);
+      this.ctx.quotedField = '';
+    } else {
+      this.ctx.line.push(this.ctx.field.trim());
+      this.ctx.field = '';
+    }
+    this.ctx.parsed.push(this.ctx.line);
+    this.ctx.line = [];
+    this.ctx.i--;
+    this.ctx.transitionTo(new StartLine());
   }
-  
 }
-class DoubleQuote extends State{
-  public readNext(): void {
-      this.context.transitionTo(new ConcreteStateB());
-  }
-  
-}
-class RegularField extends State{
-  public readNext(): void {
-      this.context.transitionTo(new ConcreteStateB());
-  }
-  
-}
-class EndLine extends State{
-  public readNext(): void {
-      this.context.transitionTo(new ConcreteStateB());
-  }
-  
-}
-
-
-/**
-* The client code.
-*/
-const context = new Context(new ConcreteStateA());
-context.request1();
-context.request2();
 
 export class CsvConverterService {
-  constructor() { 
-    
-  }
-  private readLine(){
-    const line = []
-    if(c == '\n'){
-      return line;
-    }
-    else{
-      this.readField()
-    }
-
-  }
-  private readField(){
-    const field = [];
-    if(c==','){
-      return field.join();
-    }
-    else if()
+  constructor() {}
+  parse(str: string): string[][] {
+    const ctx = new Context();
+    return ctx.parse(str);
   }
 }

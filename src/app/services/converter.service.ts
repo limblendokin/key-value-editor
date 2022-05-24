@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { map, Subject } from 'rxjs';
 import { Table } from '../Table';
+import { CsvConverterService } from './csv-converter.service';
 import { TableService } from './table.service';
 
 @Injectable({
@@ -11,7 +12,10 @@ export class ConverterService {
   convertedToCsv: string = '';
   convertedToJsonSubject = new Subject<string>();
   convertedToCsvSubject = new Subject<string>();
-  constructor(private tableService: TableService) {}
+  constructor(
+    private tableService: TableService,
+    private csvConverterService: CsvConverterService
+  ) {}
   getTableText(format: string): string {
     const table = this.tableService.getTable();
     return format === 'json'
@@ -40,11 +44,13 @@ export class ConverterService {
     try {
       table = this.tableFromJson(text);
     } catch (e) {
+      console.error(e);
       tryCsv = true;
     }
     try {
       table = this.tableFromCsv(text);
     } catch (e) {
+      console.error(e);
       return false;
     }
     this.tableService.setTable(table);
@@ -62,10 +68,13 @@ export class ConverterService {
     return new Table(headers, rows);
   }
   tableFromCsv(csv: string): Table {
-    const [headers, ...rows] = csv
-      .split('\n')
-      .filter((str) => str) // filter empty strings
-      .map((arr) => arr.split(','));
+    const [headers, ...rows] = this.csvConverterService.parse(csv);
     return new Table(headers, rows);
+
+    // const [headers, ...rows] = csv
+    //   .split('\n')
+    //   .filter((str) => str) // filter empty strings
+    //   .map((arr) => arr.split(','));
+    // return new Table(headers, rows);
   }
 }
