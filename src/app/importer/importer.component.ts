@@ -33,7 +33,7 @@ export class ImporterComponent implements OnInit {
       errors = this.converterService.setTableViaText(this.textarea);
     }
     this.errors = errors;
-    if (!errors) {
+    if (errors.length === 0) {
       this.uiService.setSelected('editor');
     }
   }
