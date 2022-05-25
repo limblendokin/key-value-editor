@@ -11,7 +11,7 @@
     />
     <label class="form-check-label" for="jsonRadio"> JSON </label>
   </div>
-  <div class="form-check">
+  <div class="form-check mb-2">
     <input
       class="form-check-input"
       type="radio"
@@ -26,10 +26,20 @@
   <textarea
     type="text"
     name="textarea"
-    class="form-control"
+    class="form-control mb-3"
     placeholder="Import or edit data to export"
     id="floatingTextarea"
-    style="height: 100px"
+    style="height: 70vh"
     [(ngModel)]="textarea"
   ></textarea>
+  <div class="dropdown d-flex justify-content-end">
+    <button
+      id="save-button"
+      type="button"
+      class="btn btn-primary"
+      (click)="saveFile()"
+    >
+      Download
+    </button>
+  </div>
 </div>

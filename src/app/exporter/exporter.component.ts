@@ -36,4 +36,14 @@ export class ExporterComponent implements OnInit {
   update() {
     this.textarea = this.converterService.getTableText(this.exportType);
   }
+  saveFile() {
+    const data = this.converterService.getTableText(this.exportType);
+    if (!data) {
+      console.error('Console.save: No data');
+      return;
+    }
+    const blob = new Blob([data], { type: `text/${this.exportType}` });
+    const url = window.URL.createObjectURL(blob);
+    window.open(url);
+  }
 }

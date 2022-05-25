@@ -31,7 +31,7 @@ export class ConverterService {
       );
       json.push(obj);
     });
-    return JSON.stringify(json);
+    return JSON.stringify(json, undefined, 2);
   }
   csvFromTable(table: Table): string {
     const concatinatedTable = [table.headers, ...table.rows];

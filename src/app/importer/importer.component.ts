@@ -12,6 +12,7 @@ export class ImporterComponent implements OnInit {
   visible: boolean = false;
   subscription: Subscription;
   valid: boolean = true;
+  file!: File;
   constructor(
     private converterService: ConverterService,
     private uiService: UiService
@@ -20,13 +21,41 @@ export class ImporterComponent implements OnInit {
       .onChange()
       .subscribe((val) => (this.visible = val === 'importer'));
   }
-
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
   ngOnInit(): void {}
   openEditor(): void {
-    const success = this.converterService.setTableViaText(this.textarea);
-    this.valid = success;
+    let success;
+    if (this.file) {
+      this.readFile().then(() => {
+        this.uiService.setSelected('editor');
+      });
+    } else {
+      success = this.converterService.setTableViaText(this.textarea);
+      this.valid = success;
+    }
     if (success) {
       this.uiService.setSelected('editor');
     }
+  }
+  readFile() {
+    return new Promise<void>((resolve, reject) => {
+      var reader = new FileReader();
+      reader.onload = () => {
+        const success = this.converterService.setTableViaText(
+          (reader.result || '').toString()
+        );
+        if (success) {
+          resolve();
+          return;
+        }
+        reject();
+      };
+      reader.readAsText(this.file);
+    });
+  }
+  fileChanged(e: any) {
+    this.file = e.target.files[0];
   }
 }

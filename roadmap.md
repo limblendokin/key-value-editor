@@ -50,5 +50,5 @@ npm. Не допускается использование готового р�
 [ ] input validation
 
 [x] set table via csv
-[ ] set table via file
+[x] set table via file
 [ ] enhancements
