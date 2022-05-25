@@ -1,20 +1,27 @@
-<form
-  *ngIf="visible"
-  class="p-3"
-  (submit)="openEditor(); $event.preventDefault()"
->
+<form *ngIf="visible" (submit)="openEditor(); $event.preventDefault()">
+  <div *ngIf="errors.length !== 0">
+    <div *ngFor="let error of errors" class="alert alert-danger" role="alert">
+      {{ error }}
+    </div>
+  </div>
   <div class="mb-3">
+    <label for="inputTextarea" class="form-label">
+      Insert CSV or JSON data to edit
+    </label>
     <textarea
+      id="inputTextarea"
       name="textarea"
-      [className]="valid ? 'form-control' : 'is-invalid form-control'"
-      placeholder="CSV or JSON data to edit"
+      [className]="
+        errors.length === 0 ? 'form-control' : 'is-invalid form-control'
+      "
+      placeholder='[{"key1":"k1v1","key2":"k2v1"},{"key1":"k1v2","key2":"k2v2"}]'
       style="height: 70vh"
       [(ngModel)]="textarea"
     ></textarea>
   </div>
   <div class="d-flex justify-content-between">
     <div>
-      <label for="formFile" class="form-label">Upload File</label>
+      <label for="formFile" class="form-label">...or upload as file</label>
       <input
         id="formFile"
         class="form-control"

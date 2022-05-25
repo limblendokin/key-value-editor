@@ -46,9 +46,9 @@ npm. Не допускается использование готового р�
 [x] delete table row
 [x] return json string
 [x] delete table header
-[ ] header name validation
-[ ] input validation
+[x] header name validation
+[x] input validation
 
 [x] set table via csv
 [x] set table via file
-[ ] enhancements
+[x] enhancements

@@ -21,6 +21,7 @@ class Context {
   }
 
   public parse(str: string): string[][] {
+    str = str.trim();
     while (this.i < str.length) {
       this.state.readNext(str[this.i++]);
     }
@@ -30,7 +31,9 @@ class Context {
     this.parsed = [];
     for (let i = 1, prevLength = parsed[0].length; i < parsed.length; i++) {
       if (parsed[i].length !== prevLength) {
-        throw SyntaxError('csv contains syntax errors');
+        throw SyntaxError(
+          'CSV Parsing Error: Lines have different number of columns'
+        );
       }
     }
 
@@ -88,6 +91,12 @@ class RegularField extends State {
       this.ctx.transitionTo(new StartField());
       return;
     }
+    if (c == '"') {
+      throw new SyntaxError(
+        'CSV Parsing Error: Unescaped double quote at position ' +
+          (this.ctx.i - 1)
+      );
+    }
     this.ctx.field += c;
   }
 }
@@ -117,6 +126,10 @@ class DoubleQuote extends State {
       this.ctx.transitionTo(new EndLine());
       return;
     }
+    throw new SyntaxError(
+      'CSV Parsing Error: Double quote, comma, or new line character expected at position ' +
+        (this.ctx.i - 1)
+    );
   }
 }
 class EndLine extends State {

@@ -55,23 +55,28 @@ export class ConverterService {
       .join('\n');
   }
 
-  setTableViaText(text: string) {
-    let table: Table;
+  setTableViaText(text: string): string[] {
+    let table!: Table;
     let tryCsv = false;
+    let errors = [];
     try {
       table = this.tableFromJson(text);
     } catch (e) {
       console.error(e);
+      errors.push((e as Error).message);
       tryCsv = true;
     }
-    try {
-      table = this.tableFromCsv(text);
-    } catch (e) {
-      console.error(e);
-      return false;
+    if (tryCsv) {
+      try {
+        table = this.tableFromCsv(text);
+      } catch (e) {
+        console.error(e);
+        errors.push((e as Error).message);
+        return errors;
+      }
     }
     this.tableService.setTable(table);
-    return true;
+    return [];
   }
   tableFromJson(json: string): Table {
     const jsonData = JSON.parse(json);

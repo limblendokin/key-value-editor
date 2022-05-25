@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ConverterService } from '../services/converter.service';
+import { TableService } from '../services/table.service';
 import { UiService } from '../services/ui.service';
 
 @Component({
@@ -13,10 +14,12 @@ export class ExporterComponent implements OnInit {
   exportType: string = 'json';
   visible: boolean = false;
   uiSubscription: Subscription;
+  warning: string = '';
 
   constructor(
     private converterService: ConverterService,
-    private uiService: UiService
+    private uiService: UiService,
+    private tableService: TableService
   ) {
     this.uiSubscription = this.uiService.onChange().subscribe((val) => {
       this.visible = val === 'exporter';
@@ -35,6 +38,9 @@ export class ExporterComponent implements OnInit {
   ngOnInit(): void {}
   update() {
     this.textarea = this.converterService.getTableText(this.exportType);
+    this.warning = this.tableService.hasDuplicateHeaders()
+      ? 'Table has duplicate headers. Exporting in *.json format will lead to data loss'
+      : '';
   }
   saveFile() {
     const data = this.converterService.getTableText(this.exportType);

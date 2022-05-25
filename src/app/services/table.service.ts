@@ -57,4 +57,7 @@ export class TableService {
     this.table = table;
     this.subject.next(this.table);
   }
+  hasDuplicateHeaders() {
+    return this.table.hasDuplicateHeaders();
+  }
 }

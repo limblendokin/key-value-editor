@@ -11,7 +11,7 @@ export class ImporterComponent implements OnInit {
   textarea: string = '';
   visible: boolean = false;
   subscription: Subscription;
-  valid: boolean = true;
+  errors: string[] = [];
   file!: File;
   constructor(
     private converterService: ConverterService,
@@ -25,32 +25,30 @@ export class ImporterComponent implements OnInit {
     this.subscription.unsubscribe();
   }
   ngOnInit(): void {}
-  openEditor(): void {
-    let success;
+  async openEditor(): Promise<void> {
+    let errors;
     if (this.file) {
-      this.readFile().then(() => {
-        this.uiService.setSelected('editor');
-      });
+      errors = await this.readFile();
     } else {
-      success = this.converterService.setTableViaText(this.textarea);
-      this.valid = success;
+      errors = this.converterService.setTableViaText(this.textarea);
     }
-    if (success) {
+    this.errors = errors;
+    if (!errors) {
       this.uiService.setSelected('editor');
     }
   }
   readFile() {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<string[]>((resolve, reject) => {
       var reader = new FileReader();
       reader.onload = () => {
-        const success = this.converterService.setTableViaText(
+        const error = this.converterService.setTableViaText(
           (reader.result || '').toString()
         );
-        if (success) {
-          resolve();
+        if (error) {
+          resolve(error);
           return;
         }
-        reject();
+        //reject();
       };
       reader.readAsText(this.file);
     });

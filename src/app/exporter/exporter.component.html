@@ -1,4 +1,11 @@
 <div *ngIf="visible">
+  <div
+    *ngIf="warning && exportType === 'json'"
+    class="alert alert-warning"
+    role="alert"
+  >
+    {{ warning }}
+  </div>
   <div class="form-check">
     <input
       class="form-check-input"

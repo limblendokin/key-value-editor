@@ -35,4 +35,11 @@ export class Table {
     this.headers.splice(index, 1);
     this.rows.map((row) => row.splice(index, 1));
   }
+  hasDuplicateHeaders() {
+    const names: any = {};
+    this.headers.forEach(
+      (header: string) => (names[header] = names[header] + 1 || 1)
+    );
+    return Object.values(names).some((v) => (v as number) > 1);
+  }
 }

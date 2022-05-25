@@ -1,39 +1,37 @@
-<div *ngIf="visible" class="container">
-  <table class="table table-bordered border-info">
-    <thead class="table-info border-info">
-      <tr>
-        <th
-          *ngFor="
-            let header of table.headers;
-            index as headerIndex;
-            trackBy: trackByIndex
-          "
-        >
-          <app-table-header
-            index="{{ headerIndex }}"
-            content="{{ header }}"
-          ></app-table-header>
-          <div class="trash" (click)="deleteColumn(headerIndex)">
-            <i class="bi bi-trash text-danger"></i>
-          </div>
-        </th>
-      </tr>
-      <div class="plus plus-right" (click)="addColumn()">+</div>
-    </thead>
-    <tbody>
-      <tr *ngFor="let row of table.rows; index as rowIndex">
-        <td *ngFor="let col of row; index as colIndex; last as isLast">
-          <app-cell
-            content="{{ col }}"
-            [rowIndex]="rowIndex"
-            [colIndex]="colIndex"
-          ></app-cell>
-          <div *ngIf="isLast" class="trash" (click)="deleteRow(rowIndex)">
-            <i class="bi bi-trash text-danger"></i>
-          </div>
-        </td>
-      </tr>
-    </tbody>
-    <div class="plus plus-bottom" (click)="addRow()">+</div>
-  </table>
-</div>
+<table *ngIf="visible" class="table table-bordered border-info">
+  <thead class="table-info border-info">
+    <tr>
+      <th
+        *ngFor="
+          let header of table.headers;
+          index as headerIndex;
+          trackBy: trackByIndex
+        "
+      >
+        <app-table-header
+          index="{{ headerIndex }}"
+          content="{{ header }}"
+        ></app-table-header>
+        <div class="trash" (click)="deleteColumn(headerIndex)">
+          <i class="bi bi-trash text-danger"></i>
+        </div>
+      </th>
+    </tr>
+    <div class="plus plus-right" (click)="addColumn()">+</div>
+  </thead>
+  <tbody>
+    <tr *ngFor="let row of table.rows; index as rowIndex">
+      <td *ngFor="let col of row; index as colIndex; last as isLast">
+        <app-cell
+          content="{{ col }}"
+          [rowIndex]="rowIndex"
+          [colIndex]="colIndex"
+        ></app-cell>
+        <div *ngIf="isLast" class="trash" (click)="deleteRow(rowIndex)">
+          <i class="bi bi-trash text-danger"></i>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+  <div class="plus plus-bottom" (click)="addRow()">+</div>
+</table>

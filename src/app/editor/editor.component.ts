@@ -20,6 +20,9 @@ export class EditorComponent implements OnInit {
       .onChange()
       .subscribe((val) => (this.visible = val === 'editor'));
   }
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 
   ngOnInit(): void {
     this.tableService.table$.subscribe((table) => (this.table = table));
